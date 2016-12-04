@@ -1,0 +1,14 @@
+{
+  "name": "wix-tpa-style-loader",
+  "version": "1.0.0",
+  "author": "Felix Mosheev",
+  "description": "Webpack loader that handles Wix TPA style params.",
+  "dependencies": {
+    "loader-utils": "0.2.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:wix-private/wix-tpa-style-loader.git"
+  },
+  "license": "MIT"
+}

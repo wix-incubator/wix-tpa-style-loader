@@ -4,7 +4,8 @@
   "author": "Felix Mosheev",
   "description": "Webpack loader that handles Wix TPA style params.",
   "dependencies": {
-    "loader-utils": "0.2.x"
+    "loader-utils": "0.2.x",
+    "postcss-extract-styles": "^1.0.0"
   },
   "repository": {
     "type": "git",

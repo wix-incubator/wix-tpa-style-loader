@@ -11,36 +11,40 @@ module.exports = function (content) {
   this.cacheable && this.cacheable();
   const query = loaderUtils.parseQuery(this.query);
   const options = {
-    pattern: /\[\[[^\]]+\]\]/,
-    remove: query.type !== 'inline'
+    pattern: /\[\[[^\]]+\]\]/
   };
 
   const done = this.async();
-  if (!done) return content;
+  if (!done) {
+    return content;
+  }
 
   // Convert curlies to brackets
-  content = content.replace(/font: ?; ?{{([^}]+)}};/g, 'font: [[$1]];');
+  content = content.replace(/font: ?; ?{{([^}]+)}};?/g, 'font: [[$1]];');
   content = content.replace(/{{([^}]+)}}/g, '[[$1]]');
+
   postcss([extractStyles(options)])
     .process(content)
     .then(function (result) {
-      let css = result.css;
-
-      if (query.type === 'inline') {
+      if (query.mode === 'inline') {
+        result = result.extracted;
         //Convert brackets to curlies
-        css = css.replace(/font: \[\[([^\]]+)\]\];/g, 'font:;{{$1}};');
-        css = css.replace(/\[\[([^\]}]+)\]\]/g, '{{$1}}');
+        result = result.replace(/font: \[\[([^\]]+)\]\];?/g, 'font:;{{$1}};');
+        result = result.replace(/\[\[([^\]}]+)\]\]/g, '{{$1}}');
 
         // Inject style tag
-        css = [
+        result = [
           '// load the inline styles',
-          'var inlineCss = ' + JSON.stringify(css) + ';',
-          'require(' + loaderUtils.stringifyRequest(this, '!' + path.join(__dirname, 'addStyles.js')) + ')(inlineCss);'
+          'var inlineCss = ' + JSON.stringify(result) + ';',
+          'if(inlineCss) {',
+          '  require(' + loaderUtils.stringifyRequest(this, '!' + path.join(__dirname, 'addStyles.js')) + ').setCss(inlineCss);',
+          '}'
         ].join('\n');
+      } else {
+        result = result.css;
       }
-      console.log(css);
 
-      done(null, css);
+      done(null, result);
     })
     .catch(function (error) {
       console.error(error);

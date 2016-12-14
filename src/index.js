@@ -37,7 +37,7 @@ module.exports = function (content) {
           '// load the inline styles',
           'var inlineCss = ' + JSON.stringify(result) + ';',
           'if(inlineCss) {',
-          '  require(' + loaderUtils.stringifyRequest(this, '!' + path.join(__dirname, 'addStyles.js')) + ').setCss(inlineCss);',
+          '  require(' + loaderUtils.stringifyRequest(this, '!' + path.join(__dirname, 'addStyles.js')) + ')(inlineCss);',
           '}'
         ].join('\n');
       } else {
@@ -45,9 +45,8 @@ module.exports = function (content) {
       }
 
       done(null, result);
-    })
+    }.bind(this))
     .catch(function (error) {
-      console.error(error);
-      done(error);
+      done(error.toString());
     });
 };

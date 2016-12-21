@@ -37,7 +37,7 @@
     ]
   },
   "publishConfig": {
-    "registry": "http://repo.dev.wix/artifactory/api/npm/npm-local/"
+    "registry": "https://registry.npmjs.org/"
   },
   "repository": {
     "type": "git",

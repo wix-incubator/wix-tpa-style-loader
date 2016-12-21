@@ -1,6 +1,6 @@
 {
   "name": "wix-tpa-style-loader",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Webpack loader that handles Wix TPA style params.",
   "author": {
     "name": "Felix Mosheev",

@@ -36,8 +36,14 @@ module.exports = function (content) {
         result = [
           '// load the inline styles',
           'var inlineCss = ' + JSON.stringify(result) + ';',
-          'if(inlineCss) {',
-          '  require(' + loaderUtils.stringifyRequest(this, '!' + path.join(__dirname, 'addStyles.js')) + ')(inlineCss);',
+          'require(' + loaderUtils.stringifyRequest(this, '!' + path.join(__dirname, 'addStyles.js')) + ')(inlineCss);',
+          'if(module.hot) {',
+          '  module.hot.accept();',
+          '  if(document.querySelector(\'style[hot-reloaded]\') && window.Wix) {',
+          '    window.Wix.Styles.getStyleParams(function(style){',
+          '      window.postMessage(JSON.stringify({intent: \'addEventListener\', eventType:window.Wix.Events.STYLE_PARAMS_CHANGE, params:{style: style}}), \'*\')',
+          '    })',
+          '  }',
           '}'
         ].join('\n');
       } else {

@@ -3,10 +3,10 @@ import sinon from 'sinon';
 import {expect} from 'chai';
 const style = require('./style.mock.js');
 
-const webpackContextFactory = (done, query) => ({
-  query: `?${query}`,
+const webpackContextFactory = (params) => ({
+  query: `?${params.query}`,
   context: '!sass-loader',
-  async: () => done
+  async: () => params.done
 });
 
 const loaderFactory = webpackContext => require('../src/index').bind(webpackContext);
@@ -14,50 +14,63 @@ const loaderFactory = webpackContext => require('../src/index').bind(webpackCont
 
 describe('Wix TPA style loader', () => {
   describe('handle error', () => {
-    let spy;
+    let doneSpy;
     beforeEach((done) => {
-      spy = sinon.spy(() => done());
-      const webpackContext = webpackContextFactory(spy);
+      doneSpy = sinon.spy(() => done());
+      const webpackContext = webpackContextFactory({done: doneSpy});
       loaderFactory(webpackContext)(style.bad);
     });
 
     it('should call to error on malformed css', () => {
-      sinon.assert.calledOnce(spy);
-      expect(spy.getCall(0).args[0]).to.contain('CssSyntaxError');
+      sinon.assert.calledOnce(doneSpy);
+      expect(doneSpy.getCall(0).args[0]).to.contain('CssSyntaxError');
     });
   });
 
   describe('handle remian', () => {
-    let spy;
+    let doneSpy;
 
     beforeEach((done) => {
-      spy = sinon.spy(() => done());
-      const webpackContext = webpackContextFactory(spy);
+      doneSpy = sinon.spy(() => done());
+      const webpackContext = webpackContextFactory({done: doneSpy});
       loaderFactory(webpackContext)(style.good);
     });
 
     it('should pass css without TPA params to next loader', () => {
-      sinon.assert.calledOnce(spy);
-      expect(spy.getCall(0).args[0]).to.eql(null);
-      expect(spy.getCall(0).args[1]).to.not.contain('color');
+      sinon.assert.calledOnce(doneSpy);
+      expect(doneSpy.getCall(0).args[0]).to.eql(null);
+      expect(doneSpy.getCall(0).args[1]).to.not.contain('color');
     });
   });
 
   describe('handle inline', () => {
-    let spy;
+    let doneSpy;
 
     beforeEach((done) => {
-      spy = sinon.spy(() => done());
-      const webpackContext = webpackContextFactory(spy, 'mode=inline');
+      doneSpy = sinon.spy(() => done());
+      const webpackContext = webpackContextFactory({done: doneSpy, query: 'mode=inline'});
       loaderFactory(webpackContext)(style.good);
     });
 
     it('should pass css with TPA params to next loader', () => {
-      sinon.assert.calledOnce(spy);
-      expect(spy.getCall(0).args[0]).to.eql(null);
-      expect(spy.getCall(0).args[1]).to.contain('{{color-1}}');
-      expect(spy.getCall(0).args[1]).to.contain('font:;{{Body-M}};');
-      expect(spy.getCall(0).args[1]).to.contain('addStyles.js');
+      sinon.assert.calledOnce(doneSpy);
+      expect(doneSpy.getCall(0).args[0]).to.eql(null);
+      expect(doneSpy.getCall(0).args[1]).to.contain('{{color-1}}');
+      expect(doneSpy.getCall(0).args[1]).to.contain('font:;{{Body-M}};');
+      expect(doneSpy.getCall(0).args[1]).to.contain('addStyles.js');
+    });
+
+    it('should support hmr', () => {
+      expect(doneSpy.getCall(0).args[1]).to.contain('if(module.hot)');
+    });
+
+    it('should accept hmr', () => {
+      expect(doneSpy.getCall(0).args[1]).to.contain('module.hot.accept()');
+    });
+
+    it('should trigger style change event', () => {
+      expect(doneSpy.getCall(0).args[1]).to.contain('window.postMessage');
+      expect(doneSpy.getCall(0).args[1]).to.contain('window.Wix.Events.STYLE_PARAMS_CHANGE');
     });
   });
 });

@@ -1,24 +1,32 @@
 module.exports = function (css) {
-  if (typeof document !== 'object') throw new Error('The wix-tpa-style-loader cannot be used in a non-browser environment');
+  if (typeof document !== 'object') {
+    throw new Error('The wix-tpa-style-loader cannot be used in a non-browser environment');
+  }
 
   createStyleElement(css);
 };
 
 function createStyleElement(css) {
-  var styleElement = document.createElement('style');
-  styleElement.type = 'text/css';
-  styleElement.setAttribute('wix-style', '');
+  var styleElement = document.querySelector('#injected-style') || document.createElement('style');
 
-  if (styleElement.styleSheet) {
-    styleElement.styleSheet.cssText = css;
-  } else {
-    while (styleElement.firstChild) {
-      styleElement.removeChild(styleElement.firstChild);
+  if(!styleElement.parentNode) {
+    styleElement.setAttribute('type', 'text/css');
+    styleElement.setAttribute('id', 'injected-style');
+    styleElement.setAttribute('wix-style', '');
+
+    if (styleElement.styleSheet) {
+      styleElement.styleSheet.cssText = css;
+    } else {
+      while (styleElement.firstChild) {
+        styleElement.removeChild(styleElement.firstChild);
+      }
+      styleElement.appendChild(document.createTextNode(css));
     }
-    styleElement.appendChild(document.createTextNode(css));
+    insertStyleElement(styleElement);
+  } else {
+    styleElement.originalTemplate = css;
+    styleElement.setAttribute('hot-reloaded', 'true');
   }
-
-  insertStyleElement(styleElement);
   return styleElement;
 }
 

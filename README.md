@@ -1,4 +1,4 @@
-# Wix TPA style loader
+# Wix TPA style loader [![Build Status](https://travis-ci.org/wix/wix-tpa-style-loader.svg?branch=master)](https://travis-ci.org/wix/wix-tpa-style-loader)
 Webpack loader that handles Wix TPA style params.
 
 ## Installation

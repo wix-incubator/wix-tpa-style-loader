@@ -9,7 +9,7 @@ const path = require('path');
 
 module.exports = function (content) {
   this.cacheable && this.cacheable();
-  const query = loaderUtils.parseQuery(this.query);
+  const query = loaderUtils.getOptions(this) || {};
   const options = {
     pattern: /\[\[[^\]]+\]\]/
   };

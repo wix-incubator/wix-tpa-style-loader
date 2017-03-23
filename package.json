@@ -4,7 +4,7 @@
   "description": "Webpack loader that handles Wix TPA style params.",
   "author": {
     "name": "Felix Mosheev",
-    "email": "felixm@wix.com",
+    "email": "",
     "url": ""
   },
   "main": "dist/src/index.js",
@@ -12,14 +12,14 @@
     "dist"
   ],
   "scripts": {
-    "start": "wix-node-build start --no-server",
-    "pretest": "wix-node-build lint && wix-node-build build",
+    "start": "yoshi start --no-server",
+    "pretest": "yoshi lint && yoshi build",
     "build": ":",
-    "test": "wix-node-build test",
-    "release": "wix-node-build release"
+    "test": "yoshi test",
+    "release": "yoshi release"
   },
   "dependencies": {
-    "loader-utils": "0.2.x",
+    "loader-utils": "^1.1.0",
     "postcss-extract-styles": "^1.0.0"
   },
   "private": false,
@@ -28,7 +28,7 @@
     "babel-preset-stage-0": "^6.5.0",
     "chai": "~3.5.0",
     "sinon": "^1.17.6",
-    "wix-node-build": "latest"
+    "yoshi": "latest"
   },
   "babel": {
     "presets": [
@@ -41,7 +41,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:wix-private/wix-tpa-style-loader.git"
+    "url": "git@github.com:wix/wix-tpa-style-loader.git"
   },
   "license": "MIT"
 }

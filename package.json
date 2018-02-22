@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "loader-utils": "^1.1.0",
-    "postcss-extract-styles": "^1.0.0"
+    "postcss-extract-styles": "^1.1.1"
   },
   "private": false,
   "devDependencies": {
